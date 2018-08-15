@@ -1,28 +1,37 @@
-version: '3.6'
-services:
-    image: docker.elastic.co/elasticsearch/elasticsearch:latest
+version: '2.2'
+services:  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
     container_name: elasticsearch
-    ports: ['9200:9200']
-    networks: ['stack']
+    environment:
+      - cluster.name=Ajay-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-      - 'es_data:/usr/share/elasticsearch/data'
-      - './scripts/setup-users.sh:/usr/local/bin/setup-users.sh:ro'
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:${TAG}
-    container_name: kibana
-    ports: ['5601:5601']
-    networks: ['stack']
-    depends_on: ['elasticsearch']
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:${TAG}
-    container_name: logstash
-    networks: ['stack']
-    depends_on: ['elasticsearch']
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:6.3.2
+#    container_name: kibana
+#    ports: ['5601:5601']
+#    networks: ['stack']
+#    depends_on: ['elasticsearch']
 
-networks: {stack: {}}
-# use docker volume to persist ES data outside of a container.
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:6.3.2
+#    container_name: logstash
+#    networks: ['stack']
+#    depends_on: ['elasticsearch']
+
 volumes:
-  es_data:
+  esdata1:
+    driver: local
+networks:
+  esnet:
 
