@@ -15,19 +15,28 @@ services:
     networks:
       - esnet
 
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.3.2
+    container_name: logstash
+    environment:
+      - http.host=0.0.0.0
+      - path.config = /usr/share/logstash/pipeline
+    networks: ['esnet']
+    depends_on: ['elasticsearch']
+    ports: ['5043:5043']
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
 
-#  kibana:
-#    image: docker.elastic.co/kibana/kibana:6.3.2
-#    container_name: kibana
-#    ports: ['5601:5601']
-#    networks: ['stack']
-#    depends_on: ['elasticsearch']
 
-#  logstash:
-#    image: docker.elastic.co/logstash/logstash:6.3.2
-#    container_name: logstash
-#    networks: ['stack']
-#    depends_on: ['elasticsearch']
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.3.2
+    container_name: kibana
+    environment:
+      - elasticsearch.url=http://192.168.0.119:9200
+    ports: ['5601:5601']
+    networks: ['esnet']
+    depends_on: ['elasticsearch']
+
 
 volumes:
   esdata1:
