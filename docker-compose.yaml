@@ -32,7 +32,7 @@ services:
     image: docker.elastic.co/kibana/kibana:6.3.2
     container_name: kibana
     environment:
-      - elasticsearch.url=http://192.168.0.119:9200
+      - elasticsearch.url=http://elasticsearch:9200
     ports: ['5601:5601']
     networks: ['esnet']
     depends_on: ['elasticsearch']
